@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-configmap
+  labels:
+    app: {{ .Release.Name }}
+data:
+  # Each key below can represent a configuration file or environment variable
+  configKey1: {{ .Values.configKey1 | quote }}
+  configKey2: {{ .Values.configKey2 | quote }}
