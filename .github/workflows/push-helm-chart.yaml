@@ -31,7 +31,7 @@ jobs:
       - name: Package Helm Chart
         env:
           VERSION: ${{ env.VERSION }}
-          run: |
+        run: |
             helm package naga-chart --version $VERSION
             mv naga-chart-$VERSION.tgz my-chart.tgz
             
