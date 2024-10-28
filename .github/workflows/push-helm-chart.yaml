@@ -36,8 +36,10 @@ jobs:
             echo "version=${VERSION}" >> $GITHUB_ENV
 
       - name: Package Helm Chart
+        env:
+          VERSION: ${{ env.version }}
         run: |
-          helm package naga-chart
+          helm package naga-chart-${VERSION}
           mv naga-chart-${VERSION}.tgz naga-chart.tgz
 
       - name: Push Helm Chart to ECR
