@@ -11,7 +11,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      VERSION: $(cat charts/Chart.yaml | grep '^version:' | awk '{print $2}')
+      VERSION: "0.1.0"
 
 
     steps:
@@ -30,18 +30,8 @@ jobs:
         run: |
           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | helm registry login -u AWS --password-stdin ${{ secrets.ECR_REGISTRY }}
 
-      - name: Set Helm Application Version
-        id: set-version
-        run: |
-            # Extract the version dynamically, for example from a Chart.yaml file or git tag
-            VERSION=$(cat charts/Chart.yaml | grep '^version:' | awk '{print $2}')
-            echo "VERSION=${VERSION}"
-            echo "version=${VERSION}" >> $GITHUB_ENV
-
       - name: Package Helm Chart
         env:
-          REGISTRY: ${{ steps.ecr-login.outputs.registry }}
-          REPOSITORY: charts
           VERSION: ${{ env.version }}
         run: |
           helm package naga-chart --version $VERSION
