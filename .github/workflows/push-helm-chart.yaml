@@ -10,6 +10,9 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      VERSION: $(cat charts/Chart.yaml | grep '^version:' | awk '{print $2}')
+
 
     steps:
       - name: Checkout code
@@ -42,7 +45,7 @@ jobs:
           VERSION: ${{ env.version }}
         run: |
           helm package naga-chart --version $VERSION
-          mv naga-chart-"$VERSION".tgz naga-chart.tgz
+          mv naga-chart-$VERSION.tgz naga-chart.tgz
 
       - name: Push Helm Chart to ECR
         run: |
