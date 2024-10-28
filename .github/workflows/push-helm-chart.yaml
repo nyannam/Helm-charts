@@ -24,7 +24,6 @@ jobs:
 
       - name: Login to Amazon ECR
         id: ecr-login
-        uses: aws-actions/amazon-ecr-login@v2.0.1
         run: |
           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | helm registry login -u AWS --password-stdin ${{ secrets.ECR_REGISTRY }}
 
