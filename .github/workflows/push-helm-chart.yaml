@@ -39,7 +39,7 @@ jobs:
         env:
           VERSION: ${{ env.version }}
         run: |
-          helm package naga-chart-${VERSION}
+          helm package naga-chart --version $VERSION
           mv naga-chart-${VERSION}.tgz naga-chart.tgz
 
       - name: Push Helm Chart to ECR
