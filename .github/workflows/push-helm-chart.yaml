@@ -1,0 +1,49 @@
+name: Push Helm Chart to ECR and Kubernetes
+
+on:
+  workflow_call:
+  push:
+    branches:
+      - main
+      - 'releases/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}  # Change this to your AWS region
+
+      - name: Login to Amazon ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2.0.1
+        run: |
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | helm registry login -u AWS --password-stdin ${{ secrets.ECR_REGISTRY }}
+
+      - name: Set Helm Application Version
+        id: set-version
+        run: |
+            # Extract the version dynamically, for example from a Chart.yaml file or git tag
+            VERSION=$(cat charts/Chart.yaml | grep '^version:' | awk '{print $2}')
+            echo "VERSION=${VERSION}"
+            echo "version=${VERSION}" >> $GITHUB_ENV
+
+      - name: Package Helm Chart
+        env:
+          REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          REPOSITORY: charts
+          VERSION: ${{ env.version }}
+        run: |
+          helm package $REPOSITORY
+
+      - name: Push Helm Chart to ECR
+        run: |
+          helm push naga-chart-${VERSION}.tgz oci://${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}
