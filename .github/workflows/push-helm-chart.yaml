@@ -40,5 +40,7 @@ jobs:
       - name: Push Helm Chart to ECR
         env:
           HELM_EXPERIMENTAL_OCI: 1
+          REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+
         run: |
-          helm push naga-chart.tgz oci://${{ secrets.AWS_ACCOUNT }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/naga-helm-chart
+          helm push naga-chart.tgz oci://$REGISTRY
