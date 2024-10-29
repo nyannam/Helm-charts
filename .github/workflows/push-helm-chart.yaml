@@ -43,4 +43,4 @@ jobs:
           VERSION: ${{ env.VERSION }}
 
         run: |
-          helm push naga-chart-"$VERSION".tgz oci://${{ secrets.AWS_ACCOUNT }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/naga-chart
+          helm push naga-chart-${{ env.VERSION }}.tgz oci://${{ secrets.AWS_ACCOUNT }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/naga-chart
