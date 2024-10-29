@@ -43,4 +43,4 @@ jobs:
           REGISTRY: ${{ steps.ecr-login.outputs.registry }}
 
         run: |
-          helm push naga-chart.tgz oci://$REGISTRY
+          helm push naga-chart-"$VERSION".tgz oci://${{ secrets.AWS_ACCOUNT }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/naga-helm-chart
