@@ -32,10 +32,10 @@ jobs:
         env:
           VERSION: ${{ env.VERSION }}
         run: |
-            helm package naga-chart --version $VERSION
+            helm package ./naga-chart --version $VERSION
             mv naga-chart-$VERSION.tgz my-chart.tgz
             
 
       - name: Push Helm Chart to ECR
         run: |
-          helm push naga-chart-$VERSION.tgz oci://${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}
+          helm push ./naga-chart-$VERSION.tgz oci://${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}
