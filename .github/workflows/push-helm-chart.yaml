@@ -24,17 +24,21 @@ jobs:
 
       - name: Login to Amazon ECR
         id: ecr-login
+        env:
+          HELM_EXPERIMENTAL_OCI: 1
         run: |
           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | helm registry login -u AWS --password-stdin ${{ secrets.ECR_REGISTRY }}
 
       - name: Package Helm Chart
         env:
+          HELM_EXPERIMENTAL_OCI: 1
           VERSION: ${{ env.VERSION }}
         run: |
             helm package ./naga-chart --version $VERSION
-            mv naga-chart-$VERSION.tgz naga-chart.tgz
+            mv naga-chart-$VERSION.tgz naga-helm-chart.tgz
 
       - name: Push Helm Chart to ECR
+        env:
+          HELM_EXPERIMENTAL_OCI: 1
         run: |
-          export HELM_EXPERIMENTAL_OCI=1
-          helm push naga-chart.tgz oci://${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}
+          helm push naga-helm-chart.tgz oci://${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}
