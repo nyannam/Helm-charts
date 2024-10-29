@@ -10,7 +10,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      VERSION: "0.1.0"
+      VERSION: "0.1.${{ github.run_id }}"
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -34,13 +34,13 @@ jobs:
           HELM_EXPERIMENTAL_OCI: 1
           VERSION: ${{ env.VERSION }}
         run: |
-            helm package ./naga-chart --version $VERSION
-            mv naga-chart-$VERSION.tgz naga-chart.tgz
+            helm package ./naga-chart --version "$VERSION"
+            ls -al
 
       - name: Push Helm Chart to ECR
         env:
           HELM_EXPERIMENTAL_OCI: 1
-          REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          VERSION: ${{ env.VERSION }}
 
         run: |
-          helm push naga-chart-"$VERSION".tgz oci://${{ secrets.AWS_ACCOUNT }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/naga-helm-chart
+          helm push naga-chart-"$VERSION".tgz oci://${{ secrets.AWS_ACCOUNT }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/naga-chart
