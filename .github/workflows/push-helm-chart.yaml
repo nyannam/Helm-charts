@@ -20,14 +20,14 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}  # Change this to your AWS region
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}  # Change this to your AWS region
 
       - name: Login to Amazon ECR
         id: ecr-login
         env:
           HELM_EXPERIMENTAL_OCI: 1
         run: |
-          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | helm registry login -u AWS --password-stdin ${{ secrets.ECR_REGISTRY }}
+          aws ecr get-login-password --region ${{ secrets.AWS_DEFAULT_REGION }} | helm registry login -u AWS --password-stdin ${{ secrets.ECR_REGISTRY }}
 
       - name: Package Helm Chart
         env:
